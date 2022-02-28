@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {Text, View, Button, TextInput, StyleSheet, Alert} from 'react-native';
-
-
+import {Text, View, Button, TextInput, StyleSheet, Alert, SafeAreaView, FlatList} from 'react-native';
+import UserList from './src/components/User/userList';
 
 
 const App = () => {
@@ -27,6 +26,16 @@ const App = () => {
     setCity(value);
   };
   
+  let [obtData, setData] = useState([]);
+
+  useEffect(() => {
+    fetch('https://calculadora-server.herokuapp.com/alumns')
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:',data);
+      setData(data);
+    });
+  },[])
 
   const styles = StyleSheet.create({
     input: {
@@ -34,6 +43,15 @@ const App = () => {
       margin: 12,
       borderWidth: 1,
       padding: 10,
+      
+    },
+  });
+  const styles2 = StyleSheet.create({
+    tittle: {
+      fontSize: 20,
+      margin: 2,
+      padding: 6,
+      
     },
   });
   
@@ -88,11 +106,16 @@ const App = () => {
       />
       <Button title='CLick' onPress={peticion}></Button>
 
+      <SafeAreaView>
+        <FlatList 
+          data = {obtData}
+          renderItem={({item}) => <UserList user={item}/>}
+          keyExtractor = {(item) => item.id}
+          ListHeaderComponent = {() => <Text style={styles2.tittle}>USERS</Text>}
+        />
+      </SafeAreaView>
     </View>
   )   
-}
-
-
-
+};
 
 export default App;
